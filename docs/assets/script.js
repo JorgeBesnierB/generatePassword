@@ -61,21 +61,34 @@ function getCriteria() {
     if (confirm("Password with: Lower Case?") == true) {
       acceptanceCriteria.lowerCase = true;
     }
+    else{
+      acceptanceCriteria.lowerCase = false;
+    }
 
     //JBE: Validate if user wants upper case caracter in their password.
     if (confirm("Password with: Upper Case?") == true) {
       acceptanceCriteria.upperCase = true;
+    }
+    else{
+      acceptanceCriteria.upperCase = false;
     }
 
     //JBE: Validate if user wants numeric  caracter in their password.
     if (confirm("Password with: Numeric Values?") == true) {
       acceptanceCriteria.numericValue = true;
     }
+    else{
+      acceptanceCriteria.numericValue = false;
+    }
 
     //JBE: Validate if user wants special  caracter in their password.
     if (confirm("Password with: Special Characters?") == true) {
       acceptanceCriteria.specialCharacter = true;
     }
+    else{
+      acceptanceCriteria.specialCharacter = false;
+    }
+    
   } //JBE: end of criteria loop
 }
 
@@ -83,57 +96,81 @@ function getCriteria() {
 // Functions that asks for user criteria, and generate the password acordingly.
 // ##############################################################################################
 function generatePassword() {
-  let value1 = null; //JBE: Select a character set
-  let value2 = null; //JBE: Select a charaacter from the set selected.
   let char = null;
+  let validChars = '';
   var passwordAux = '';
+  var validPass = {
+    //JBE: At least one of the following options must be confirmed.
+    lowerCase: false,
+    upperCase: false,
+    numericValue: false,
+    specialCharacter: false
+  }
+  acceptanceCriteria = {
+    lenght: null, //JBE: Must be between 8 to 128 characters
+    //JBE: At least one of the following options must be confirmed.
+    lowerCase: false,
+    upperCase: false,
+    numericValue: false,
+    specialCharacter: false
+  }
   //JBE: Get user critieria
   getCriteria();
-  //JBE: Generate, and assign Password
-  for (var i = 0; i < acceptanceCriteria.lenght; i++){
-    let value1 = Math.floor(Math.random() * 4);
-    console.log('befor switch', value1)
-    switch (value1) {
-      case 0:
-        console.log('0 switch', value1)
-        if(acceptanceCriteria.lowerCase){
-          value2 = Math.floor(Math.random() * lower.length);
-          //JBE select substring string.substr(start, length)
-          char = lower.substr(value2, 1);
-          passwordAux.concat(passwordAux, char)
-          passwordAux.concat
-        }
-        break;
-      case 1:
-        console.log('1 switch', value1)
-        if(acceptanceCriteria.upperCase){
-          value2 = Math.floor(Math.random() * upper.length);
-          //JBE select substring string.substr(start, length)
-          char = upper.substr(value2, 1);
-          passwordAux.concat(passwordAux, char)
-        }
-        break;
-      case 2:
-        console.log('2 switch', value1)
-        if(acceptanceCriteria.numericValue){
-          value2 = Math.floor(Math.random() * numeric.length);
-          //JBE select substring string.substr(start, length)
-          char = numeric.substr(value2, 1);
-          passwordAux.concat(passwordAux, char)
-        }
-        break;
-      case 3:
-        console.log('3 switch', value1)
-        if(acceptanceCriteria.specialCharacter){
-          value2 = Math.floor(Math.random() * special.length);
-          //JBE select substring string.substr(start, length)
-          char = special.substr(value2, 1);
-          passwordAux.concat(passwordAux, char)
-        }
-        break;
+  // ---------------------------------------------------------------------------------------------
+  //JBE: Generate array with criteria from user
+  // ---------------------------------------------------------------------------------------------
+  if (acceptanceCriteria.lowerCase){
+    validChars = validChars.concat(lower)
+  }
+  if(acceptanceCriteria.upperCase){
+    validChars = validChars.concat(upper)
+  }
+  if(acceptanceCriteria.numericValue){
+    validChars = validChars.concat(numeric)
+  }
+  if(acceptanceCriteria.specialCharacter){
+    validChars = validChars.concat(special)
+  }
+  // ---------------------------------------------------------------------------------------------
+  //JBE: Generate, and assign Password, and re attempt if password does not fulfils user input.
+  // ---------------------------------------------------------------------------------------------
+  while(!validPass.lowerCase || !validPass.upperCase || !validPass.numericValue || !validPass.specialCharacter){
+    passwordAux = ''
+    validPass = {
+      //JBE: all options must be confirmed.
+      lowerCase: true,
+      upperCase: true,
+      numericValue: true,
+      specialCharacter: true
     }
-  } //JBE: end of for loop
-  console.log(passwordAux);
+
+    // JBE:select random characters to form the string
+    for (var i = 0; i < acceptanceCriteria.lenght; i++){
+      let value1 = Math.floor(Math.random() * validChars.length);
+      char = validChars.charAt(value1);
+      passwordAux = passwordAux.concat(char)
+    } //JBE: end of for loop
+
+    //Validate that the criteria is met
+    if (acceptanceCriteria.lowerCase){
+      validPass.lowerCase = /[a-z]/.test(passwordAux);
+    }
+    if(acceptanceCriteria.upperCase){
+      validPass.upperCase = /[A-Z]/.test(passwordAux);
+    }
+
+    if(acceptanceCriteria.numericValue){
+      validPass.numericValue = /[0-9]/.test(passwordAux);
+    }
+
+    if(acceptanceCriteria.specialCharacter){
+      validPass.specialCharacter = /[!@#$%^&*()]/.test(passwordAux);
+    }
+
+    // console.log(validPass);
+    // console.log('pass: ',passwordAux);
+  }
+
 }
 // ##############################################################################################
 // Write password to the #password input
@@ -144,6 +181,7 @@ function writePassword() {
   var passwordText = document.querySelector("#password");
   passwordText.value = password;
 }
-
+// ##############################################################################################
 // Add event listener to generate button
+// ##############################################################################################
 generateBtn.addEventListener("click", writePassword);
