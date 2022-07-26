@@ -170,7 +170,7 @@ function generatePassword() {
     // console.log(validPass);
     // console.log('pass: ',passwordAux);
   }
-
+  return passwordAux;
 }
 // ##############################################################################################
 // Write password to the #password input
