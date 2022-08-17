@@ -1,5 +1,5 @@
 # generatePassword
-A challenge to showcas my skills on adding functionality to a web page using javascript.
+A challenge to show case my skills on adding functionality to a web page using javascript.
 
 # User Story
 AS AN employee with access to sensitive data
